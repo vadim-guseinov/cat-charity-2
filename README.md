@@ -11,8 +11,8 @@
 
 </div>
 
-> Это промежуточная версия проекта. Итоговая версия с отчётами на Яндекс Диске — **[QRkot-spreadsheets](https://github.com/JuliaDJ1/QRkot-spreadsheets)**.
-> Путь проекта: [cat-charity-1](https://github.com/JuliaDJ1/cat-charity-1) → [cat-charity-2](https://github.com/JuliaDJ1/cat-charity-2) → [QRkot-spreadsheets](https://github.com/JuliaDJ1/QRkot-spreadsheets).
+> Это промежуточная версия проекта. Итоговая версия с отчётами на Яндекс Диске — **[QRkot-spreadsheets](https://github.com/vadim-guseinov/QRkot-spreadsheets)**.
+> Путь проекта: [cat-charity-1](https://github.com/vadim-guseinov/cat-charity-1) → [cat-charity-2](https://github.com/vadim-guseinov/cat-charity-2) → [QRkot-spreadsheets](https://github.com/vadim-guseinov/QRkot-spreadsheets).
 
 ## О проекте
 
@@ -35,7 +35,7 @@ Python 3.12 · FastAPI · SQLAlchemy 2.0 (async) · Alembic · Pydantic v2 · SQ
 **Требования:** Python 3.10+ (проверено на 3.12).
 
 ```bash
-git clone https://github.com/JuliaDJ1/cat-charity-2.git
+git clone https://github.com/vadim-guseinov/cat-charity-2.git
 cd cat-charity-2
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
