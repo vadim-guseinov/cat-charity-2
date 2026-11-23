@@ -1,132 +1,68 @@
-# QRKot — Благотворительный фонд поддержки котиков 🐱
+<div align="center">
 
-## Описание
+# 🐈 QRKot · этап 2
 
-**QRKot** — REST API для благотворительного фонда поддержки кошачьей популяции.
-Фонд собирает пожертвования на конкретные целевые проекты: корм, ветеринарную
-помощь, организацию приютов и многое другое.
+**Асинхронный REST API благотворительного фонда на FastAPI — второй этап: добавлены пользователи, регистрация и JWT-аутентификация (FastAPI Users), разграничение прав**
 
-## Как это работает
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-async-009688?logo=fastapi&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0_async-D71F00?logo=sqlalchemy&logoColor=white)
+![Tests](https://img.shields.io/badge/pytest-78%2F78_passed-2ea44f?logo=pytest&logoColor=white)
 
-- Администраторы (суперпользователи) открывают **целевые проекты** с названием,
-  описанием и суммой сбора.
-- Зарегистрированные пользователи делают **пожертвования** — средства автоматически
-  распределяются по открытым проектам начиная с самого старого.
-- Если пожертвование перекрывает один проект — остаток идёт в следующий.
-- Когда проект собирает нужную сумму — он автоматически закрывается.
+</div>
 
-## Права доступа
+> Это промежуточная версия проекта. Итоговая версия с отчётами на Яндекс Диске — **[QRkot-spreadsheets](https://github.com/JuliaDJ1/QRkot-spreadsheets)**.
+> Путь проекта: [cat-charity-1](https://github.com/JuliaDJ1/cat-charity-1) → [cat-charity-2](https://github.com/JuliaDJ1/cat-charity-2) → [QRkot-spreadsheets](https://github.com/JuliaDJ1/QRkot-spreadsheets).
 
-| Действие | Аноним | Пользователь | Суперпользователь |
-|----------|--------|--------------|-------------------|
-| Просмотр проектов | ✅ | ✅ | ✅ |
-| Создание/редактирование/удаление проектов | ❌ | ❌ | ✅ |
-| Создание пожертвования | ❌ | ✅ | ✅ |
-| Просмотр своих пожертвований | ❌ | ✅ | ✅ |
-| Просмотр всех пожертвований | ❌ | ❌ | ✅ |
+## О проекте
 
-## Технологии
+Фонд собирает пожертвования на целевые проекты. Сервис автоматически распределяет каждое пожертвование по открытым проектам в порядке их создания (FIFO): остаток переходит в следующий проект, а проект закрывается, когда нужная сумма собрана.
 
-| Стек | Версия |
-|------|--------|
-| Python | 3.10+ |
-| FastAPI | 0.111.0 |
-| FastAPI Users | 13.0.0 |
-| SQLAlchemy | 2.0 (async) |
-| Alembic | 1.7.7 |
-| Pydantic | 2.7 |
-| SQLite + aiosqlite | — |
+## Возможности
 
-## Установка и запуск
+- **Целевые проекты** — создание, изменение, удаление; запрет изменять закрытый проект и удалять проект с внесёнными средствами.
+- **Пожертвования** — автоматическое инвестирование в открытые проекты.
+- **Пользователи и роли** — регистрация, JWT-аутентификация (FastAPI Users); проекты создаёт и меняет только суперпользователь, пожертвования делают авторизованные пользователи.
+- Валидация через Pydantic v2, миграции Alembic, документация Swagger / ReDoc.
+- **78 из 78 автотестов** pytest проходят.
+
+## Стек
+
+Python 3.12 · FastAPI · SQLAlchemy 2.0 (async) · Alembic · Pydantic v2 · SQLite / aiosqlite · FastAPI Users · JWT · pytest
+
+## Запуск
+
+**Требования:** Python 3.10+ (проверено на 3.12).
 
 ```bash
-# 1. Клонировать репозиторий
 git clone https://github.com/JuliaDJ1/cat-charity-2.git
 cd cat-charity-2
-
-# 2. Создать и активировать виртуальное окружение
 python -m venv venv
-source venv/bin/activate
-
-# 3. Установить зависимости
+source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-# 4. Применить миграции
 alembic upgrade head
-
-# 5. Запустить сервер
 uvicorn app.main:app --reload
 ```
 
-После запуска:
-- Swagger UI: http://127.0.0.1:8000/docs
-- ReDoc: http://127.0.0.1:8000/redoc
+Документация API: http://127.0.0.1:8000/docs
 
-## API
-
-### Авторизация (`/auth`)
-
-| Метод | URL | Описание |
-|-------|-----|----------|
-| POST | /auth/register | Регистрация |
-| POST | /auth/jwt/login | Получить JWT-токен |
-| POST | /auth/jwt/logout | Выйти |
-| GET | /auth/users/me | Данные текущего пользователя |
-| PATCH | /auth/users/me | Обновить данные пользователя |
-
-### Целевые проекты (`/charity_project`)
-
-| Метод | URL | Описание | Доступ |
-|-------|-----|----------|--------|
-| GET | /charity_project/ | Список всех проектов | Все |
-| POST | /charity_project/ | Создать проект | Суперпользователь |
-| PATCH | /charity_project/{id} | Редактировать проект | Суперпользователь |
-| DELETE | /charity_project/{id} | Удалить проект | Суперпользователь |
-
-### Пожертвования (`/donation`)
-
-| Метод | URL | Описание | Доступ |
-|-------|-----|----------|--------|
-| GET | /donation/ | Все пожертвования | Суперпользователь |
-| POST | /donation/ | Сделать пожертвование | Авторизованный |
-| GET | /donation/my | Мои пожертвования | Авторизованный |
-
-## Структура проекта
-
-app/
-├── main.py # Точка входа, FastAPI app
-├── api/
-│ ├── routers.py # Подключение роутеров
-│ └── endpoints/
-│ ├── charity_project.py # Эндпоинты проектов
-│ ├── donation.py # Эндпоинты пожертвований
-│ └── user.py # Эндпоинты пользователей
-├── core/
-│ ├── config.py # Настройки приложения
-│ ├── db.py # Подключение к БД и сессия
-│ └── user.py # FastAPI Users: менеджер, бэкенд, зависимости
-├── crud/
-│ ├── base.py # Базовый Generic CRUD
-│ ├── charity_project.py
-│ └── donation.py
-├── models/
-│ ├── charity_project.py # ORM-модели + абстрактный базовый класс
-│ ├── donation.py
-│ └── user.py # Модель пользователя (FastAPI Users)
-├── schemas/
-│ ├── charity_project.py # Pydantic-схемы проектов
-│ ├── donation.py # Pydantic-схемы пожертвований
-│ └── user.py # Pydantic-схемы пользователей
-└── services/
-└── investment.py # Логика распределения пожертвований
-
-
-## Запуск тестов
+### Тесты
 
 ```bash
-python3 -m pytest
+pytest
 ```
+
+## Основные эндпоинты
+
+| Метод | URL | Описание |
+|---|---|---|
+| GET, POST | `/charity_project/` | список проектов / создать проект |
+| PATCH, DELETE | `/charity_project/{id}` | изменить / удалить проект |
+| GET, POST | `/donation/` | список пожертвований / пожертвовать |
+| POST | `/auth/register`, `/auth/jwt/login` | регистрация и получение JWT |
+| GET | `/donation/my` | мои пожертвования |
 
 ## Автор
 
-[JuliaDJ1](https://github.com/JuliaDJ1)
+**Вадим Гусейнов** — Python-разработчик (Backend) · [Telegram](https://t.me/eviliing)
